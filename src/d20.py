@@ -1,5 +1,9 @@
 from random import randint
 
+class InvalidDice(Exception):
+    pass
+
+
 def roll_dice(dice_to_roll, find_max=False, find_min=False):
     """Roll dice for a d20 game, such as D&D
 
@@ -14,9 +18,7 @@ def roll_dice(dice_to_roll, find_max=False, find_min=False):
     Returns:
         dice_roll: int, the sum of the rolled dice
     """
-    times = 0
-    sides = 0
-    additional = 0
+    times, sides, additional = 0, 0, 0
     if '+' in dice_to_roll:
         additional = int(dice_to_roll.split('+')[1])
         times, sides = dice_to_roll.split('d')
