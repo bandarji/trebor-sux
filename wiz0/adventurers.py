@@ -15,7 +15,7 @@ Data = Union[dict, None]
 @unique
 class Vocation(Enum):
     FIGHTER = 1
-    ARCHMAGE = 2
+    MAGE = 2
     BARD = 3
     CLERIC = 4
     DRUID = 5
@@ -82,11 +82,50 @@ class Inventory:
 
 class Adventurer:
 
-    def __init__(self, name: str='', characteristics: Data=None):
+    def __init__(self, 
+                 name: str='',
+                 abilities: Data=None,
+                 characteristics: Data=None,
+                 magic: Data=None,
+                 inventory: Data=None):
         self.name = name or 'NONE'
+        self.abilities = _parse_abilities(abilities)
         self.characteristics = _parse_characteristics(characteristics)
+        self.magic = _parse_magic(magic)
+        self.inventory = _parse_inventory(inventory)
 
-def _parse_characteristics(characteristics):
+    def save(self):
+        info = {}
+        info['abilities'] = self.abilities
+        info['characteristics'] = {
+            'alignment': self.characteristics.alignment.value,
+            'race': self.characteristics.race.value,
+            'hp': self.characteristics.hp,
+            'max_hp': self.characteristics.max_hp,
+            'xp': self.characteristics.xp,
+            'level': self.characteristics.level,
+            'vocation': self.characteristics.vocation.value,
+        }
+        info['magic'] = {
+            'spells': [s.value for s in self.magic.spells],
+        }
+        print(info)
+
+def _parse_abilities(abilities: Data):
+    if not abilities:
+        abilities = {}
+    params = {
+        'strength': abilities.get('strength', 10),
+        'intelligence': abilities.get('intelligence', 10),
+        'wisdom': abilities.get('wisdom', 10),
+        'constitution': abilities.get('constitution', 10),
+        'charisma': abilities.get('charisma', 10),
+        'dexterity': abilities.get('dexterity', 10),
+        'luck': abilities.get('luck', 10),
+    }
+    return Abilities(**params)
+
+def _parse_characteristics(characteristics: Data):
     if not characteristics:
         characteristics = {}
     params = {
@@ -99,6 +138,30 @@ def _parse_characteristics(characteristics):
         'vocation': Vocation(characteristics.get('vocation', 1)),
     }
     return Characteristics(**params)
+
+def _parse_magic(magic: Data):
+    if not magic:
+        magic = {}
+    params = {
+        'spells': magic.get('spells', []),
+        'slots': magic.get('slots', [0 for _ in range(9)]),
+        'features': magic.get('features', []),
+        'skills': magic.get('skills', []),
+    }
+    return Magic(**params)
+
+def _parse_inventory(inventory: Data):
+    if not inventory:
+        inventory = {}
+    params = {
+        'items': inventory.get('items', []),
+        'weapon': inventory.get('weapon', ''),
+        'helm': inventory.get('helm', ''),
+        'armor': inventory.get('armor', ''),
+        'shield': inventory.get('shield', ''),
+        'ring': inventory.get('ring', ''),
+    }
+    return Inventory(**params)
 
 # ======[ END NEW ]
 

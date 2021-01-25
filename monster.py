@@ -27,6 +27,15 @@ for m in monsters:
 
 char = {
     'name': 'RETER',
+    'abilities': {
+        'strength': 15,
+        'intelligence': 14,
+        'wisdom': 14,
+        'constitution': 12,
+        'charisma': 13,
+        'luck': 14,
+        'dexterity': 14,
+    },
     'characteristics': {
         'alignment': 1,
         'race': 3,
@@ -36,9 +45,26 @@ char = {
         'level': 1,
         'vocation': 6,
     },
+    'magic': {
+        'spells': ['sleep', 'magic missile'],
+        'slots': [4, 3, 1, 0, 0, 0, 0, 0, 0],
+        'features': ['sneak attack'],
+        'skills': ['balance'],
+    },
+    'inventory': {
+        'items': ['short sword', 'shield +1'],
+        'weapon': 'short sword',
+        'shield': 'shield +1',
+    },
 }
 me = Adventurer(**char)
-print(me)
+print(me.abilities)
 print(me.characteristics)
+print(me.magic)
+print(me.inventory)
+print('============\n')
+me.save()
+print('============\n')
+
 me = Adventurer()
 print(me.characteristics)
