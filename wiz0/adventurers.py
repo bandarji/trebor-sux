@@ -1,7 +1,7 @@
 from .d20 import roll_dice
-
+from .tables import Spell, Vocation, Race, Alignment
+from enum import Enum
 from dataclasses import dataclass, field
-from enum import Enum, unique
 from typing import List, Union
 
 import json
@@ -12,36 +12,7 @@ Data = Union[dict, None]
 
 # ======[ NEW ]
 
-@unique
-class Vocation(Enum):
-    FIGHTER = 1
-    MAGE = 2
-    BARD = 3
-    CLERIC = 4
-    DRUID = 5
-    KNIGHT = 6
-    LORD = 7
-    MONK = 8
-    NINJA = 9
-    RONIN = 10
-    THIEF = 11
-    WIZARD = 12
 
-
-@unique
-class Race(Enum):
-    HUMAN = 1
-    DWARF = 2
-    ELF = 3
-    GNOME = 4
-    ORC = 5
-    MINOTAUR = 6
-
-@unique
-class Alignment(Enum):
-    GOOD = 1
-    NEUTRAL = 2
-    EVIL = 3
 
 
 @dataclass
@@ -143,7 +114,7 @@ def _parse_magic(magic: Data):
     if not magic:
         magic = {}
     params = {
-        'spells': magic.get('spells', []),
+        'spells': [Spell(s) for s in magic.get('spells', [])],
         'slots': magic.get('slots', [0 for _ in range(9)]),
         'features': magic.get('features', []),
         'skills': magic.get('skills', []),
