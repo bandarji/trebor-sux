@@ -46,7 +46,7 @@ char = {
         'vocation': 6,
     },
     'magic': {
-        'spells': ['sleep', 'magic missile'],
+        'spells': [2, 3],
         'slots': [4, 3, 1, 0, 0, 0, 0, 0, 0],
         'features': ['sneak attack'],
         'skills': ['balance'],
