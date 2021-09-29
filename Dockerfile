@@ -1,8 +1,18 @@
 # trebor_sux
 
-FROM python:slim
+FROM python:rc-bullseye
+
 MAINTAINER Sean Jain Ellis <sellis@bandarji.com>
 
-RUN pip install blessed
+# ENV DEBIAN_FRONTEND="noninteractive"
 
-# ENV EXAMPLE_ENVVAR="howdy"
+RUN apt-get update
+# RUN apt-get --yes --force-yes install kmod kbd
+
+RUN pip install --upgrade pip
+RUN pip install blessed pybraille
+
+WORKDIR /treborsux
+
+# ENTRYPOINT ["python", "/treborsux/game.py"]
+ENTRYPOINT ["/bin/bash"]

@@ -1,70 +1,48 @@
-class ScenarioDisk:
-
-    def __init__(self):
-        self.x = 0
-
-    def save(self):
-        pass
-
-def output(text, x=0, y=0):
-    print(text.upper())
+from blessed import Terminal
+from pybraille import convertText as braille
+import string
+import sys
+import time
 
 
-def visit_barracks(data):
-    output('Barracks visited')
-    return data
+def display(x, y, msg):
+    print(f'{term.move_xy(x, y)}{msg}')
 
 
-def visit_store(data):
-    output('Store visited')
-    return data
+def get_input(x, y, prompt='>', prompt_width=16, response_width=16):
+    response = ''
+    with term.fullscreen(), term.cbreak(), term.hidden_cursor():
+        while True:
+            display(x, y, f'{term.normal}{term.bright_green}{prompt} [{term.white}{response:{response_width}}{term.normal}{term.bright_green}]')
+            if len(response) >= response_width:
+                break
+            char = term.inkey()
+            if str(char) in string.ascii_letters + ' ':
+                response += str(char).upper()
+            elif char.name == 'KEY_BACKSPACE':
+                response = response[:-1]
+            elif char.name == 'KEY_ENTER':
+                break
+            else:
+                pass
+    return response
 
 
-def visit_dungeon(data):
-    output('dungeon visited')
-    return data
-
-
-def display_menu(menu):
-    output('\n'.join(menu))
-
-def keypressed():
-    return input()
-
-
-def visit_tavern(data):
-    options = {
-        'B': visit_barracks,
-        'G': visit_store,
-        'E': visit_dungeon,
-    }
-    menu = [
-        "Tavern",
-        "======\n",
-        "E)nter dungeon",
-        "G)eneral store",
-        "B)arracks",
-        "Q)uit game",
-    ]
-    while True:
-        display_menu(menu)
-        key = keypressed().upper()
-        print(f'key={key}')
-        if key == 'Q':
-            break
-        elif key in options:
-            data = options.get(key)(data)
-            continue
-        else:
-            continue
-    return data
+def play():
+    print(f'{term.home}{term.clear}')
+    name = get_input(2, 5, prompt='NAME')
+    race = get_input(2, 6, prompt='RACE')
+    print(f'{term.home}{term.clear}')
+    display(10, 10, name)
+    display(10, 11, race)
+    time.sleep(3)
 
 
 def main():
-    data = ScenarioDisk()
-    data = visit_tavern(data)
-    data.save()
+    with term.fullscreen(), term.cbreak(), term.hidden_cursor():
+        play()
+    return 0
 
 
-if __name__ == '__main__':
-    main()
+term = Terminal()
+sys.exit(main())
