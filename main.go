@@ -20,5 +20,8 @@ func Splash() {
 }
 
 func main() {
-	Splash()
+	// Splash()
+	for i := 0; i < 10; i++ {
+		fmt.Println(RollDice("3d6"))
+	}
 }
