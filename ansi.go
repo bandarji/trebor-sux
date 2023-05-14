@@ -10,6 +10,7 @@ type Pen struct {
 }
 
 func NewPen() *Pen {
+	HideCursor()
 	return &Pen{1, 37, 40, assembleCode("bold", "white", "black")}
 }
 
@@ -69,7 +70,7 @@ func (p Pen) Write(s string) {
 }
 
 func (p Pen) Close() {
-	fmt.Printf("%s0m", esc)
+	fmt.Printf("%s0m%s?25h", esc, esc)
 	Down(40)
 }
 
@@ -94,4 +95,8 @@ func EraseToEnd(y, x int) {
 
 func ClearScr() {
 	fmt.Printf("%s2J", esc)
+}
+
+func HideCursor() {
+	fmt.Printf("%s?25l", esc)
 }
