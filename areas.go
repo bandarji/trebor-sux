@@ -22,8 +22,19 @@ func Splash() {
 }
 
 func Main() {
+	sy, sx := 1, 1
+	w, h := 40, 20
+	options := []string{
+		"[T]raining Grounds",
+		"[C]enter of Town",
+	}
 	ClearScr()
-	b := NewBox("Main Menu", "cyan", "green", 1, 1, 40, 20)
+	b := NewBox("Main Menu", "cyan", "green", sy, sx, w, h)
 	b.Render()
-	fmt.Scanln()
+	p := NewPen()
+	p.Set("bold", "magenta", "black")
+	for i, option := range options {
+		Goto(sy+2+(i*2), sx+2)
+		p.Write(option)
+	}
 }
