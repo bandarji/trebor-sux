@@ -14,6 +14,28 @@ func NewPen() *Pen {
 	return &Pen{1, 37, 40, assembleCode("bold", "white", "black")}
 }
 
+func RevColor(c int) (s string) {
+	switch c % 10 {
+	case 0:
+		s = "black"
+	case 1:
+		s = "red"
+	case 2:
+		s = "green"
+	case 3:
+		s = "yellow"
+	case 4:
+		s = "blue"
+	case 5:
+		s = "magenta"
+	case 6:
+		s = "cyan"
+	case 7, 8, 9:
+		s = "white"
+	}
+	return
+}
+
 func assembleCode(w, f, b string) string {
 	wc, fc, bc := 1, 37, 40
 	switch w {
@@ -99,4 +121,15 @@ func ClearScr() {
 
 func HideCursor() {
 	fmt.Printf("%s?25l", esc)
+}
+
+func Bracket(p *Pen, c1, c2, s string) {
+	priorColor := RevColor(p.fg)
+	p.Set(RevColor(p.weight), c1, RevColor(p.bg))
+	p.Write("[ ")
+	p.Set(RevColor(p.weight), c2, RevColor(p.bg))
+	p.Write(s)
+	p.Set(RevColor(p.weight), c1, RevColor(p.bg))
+	p.Write(" ]")
+	p.Set(RevColor(p.weight), priorColor, RevColor(p.bg))
 }
