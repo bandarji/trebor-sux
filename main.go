@@ -1,10 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"treborsux/tssplash"
+)
 
 func main() {
-	Splash()
-	Main()
-	x := ReadOneKey()
-	fmt.Println(x)
+	tssplash.Splash()
 }
