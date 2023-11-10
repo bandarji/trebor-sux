@@ -1,5 +1,5 @@
 build:
-	go build -o ./treborsux .
+	go build -o ./treborsux cmd/treborsux/main.go
 
 clean:
 	go clean

@@ -1,4 +1,4 @@
-package main
+package d20
 
 import (
 	"math/rand"
