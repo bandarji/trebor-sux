@@ -2,38 +2,41 @@ package main
 
 import (
 	"fmt"
-	"time"
+	"log"
 
 	"github.com/bandarji/treborsux/internal/ansi"
-	"github.com/bandarji/treborsux/internal/d20"
 	"github.com/bandarji/treborsux/internal/helpers"
 	"github.com/bandarji/treborsux/internal/menus"
+	"github.com/bandarji/treborsux/internal/terminal"
 )
 
 func main() {
+	width, height := terminal.GetTerminalSize()
+	if width < 82 || height < 62 {
+		log.Fatal("Terminal must exceed 81 characters in width and 61 lines in height")
+	}
 	fmt.Print(ansi.CursorOff())
+	defer func() {
+		fmt.Print(ansi.CursorOn())
+	}()
+
 	fmt.Print(helpers.Splash())
-	d20.RollDice("1d20")
-	time.Sleep(3 * time.Second)
-	choices := map[rune]string{
-		'X': "Choice X",
-		'Y': "Choice Y",
-		'Z': "Choice ZZZ",
-	}
-	menu := menus.NewMenu("In Town", 10, 3, []rune{'X', 'Y', 'Z', 'x', 'y', 'z'}, choices)
-	fmt.Print(menu.Display(), ansi.Pos(40, 80))
 
-	xmenu := &menus.XMenu{
-		X:       30,
-		Y:       30,
-		Index:   -1,
-		Prompt:  "What RACE?",
-		Items:   []string{"HUMAN", "DWARF", "TIEFLING", "ELF", "FRIEND", "HELLO"},
-		HotKeys: []rune{},
+	menu := &menus.Menu{
+		X:      30,
+		Y:      30,
+		Index:  -1,
+		Prompt: "RACE?",
 	}
+	menu.Add('H', "HUMAN")
+	menu.Add('D', "DWARF")
+	menu.Add('T', "TIEFLING")
+	menu.Add('E', "ELF")
+	menu.Add('O', "ORC")
 
-	index, choice := xmenu.Display()
+	index, choice := menu.Run()
+	menu.Clean()
 	fmt.Print(ansi.CursorOn())
 
-	fmt.Printf("%s%d %s", ansi.Pos(40, 1), index, choice)
+	fmt.Printf("%s%d %s\n", ansi.Pos(40, 1), index, choice)
 }

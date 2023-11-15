@@ -3,7 +3,7 @@ package ansi
 import "fmt"
 
 var (
-	Black   = ANSI("\033[1;30m%s")
+	Black   = ANSI("\033[0;30m%s")
 	Red     = ANSI("\033[1;31m%s")
 	Green   = ANSI("\033[1;32m%s")
 	Yellow  = ANSI("\033[1;33m%s")
