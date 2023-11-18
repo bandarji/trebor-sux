@@ -36,7 +36,11 @@ func main() {
 
 	index, choice := menu.Run()
 	menu.Clean()
+
+	box := &helpers.Box{}
+	box.Init(15, 10, 50, 10, true)
+	box.Draw()
 	fmt.Print(ansi.CursorOn())
 
-	fmt.Printf("%s%d %s\n", ansi.Pos(40, 1), index, choice)
+	fmt.Printf("%s%s %s\n", ansi.Pos(40, 1), ansi.Magenta(index), ansi.Magenta(choice))
 }
