@@ -9,12 +9,13 @@ import (
 	"github.com/bandarji/treborsux/internal/types"
 )
 
-func Splash() string {
+func Splash(w int) string {
+	offset := w/2 - 42
 	sb := strings.Builder{}
 	sb.WriteString(c.Clear())
 	for i, line := range strings.Split(types.Title, "\n") {
 		fmt.Print()
-		sb.WriteString(c.Pos(i+5, 20))
+		sb.WriteString(c.Pos(i+5, offset))
 		sb.WriteString(c.Red(line))
 	}
 	return sb.String()
