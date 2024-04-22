@@ -1,0 +1,12 @@
+SWORD:
+  name: SWORD
+  category: WEAPON
+  damage: 1d4+1
+  in_store: true
+  gold: 10
+SHIELD:
+  name: SHIELD
+  category: ARMOR
+  in_store: true
+  gold: 15
+  chance: 99

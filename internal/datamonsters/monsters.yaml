@@ -1,0 +1,8 @@
+BEAR:
+  name: BEAR
+  level: 1
+  chance: 18
+  hp: 5d8+10
+  xp: 5d12+20
+  gold: 2d6+5
+  party: 1d4
