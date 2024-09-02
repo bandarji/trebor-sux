@@ -6,3 +6,19 @@ BEAR:
   xp: 5d12+20
   gold: 2d6+5
   party: 1d4
+FROG:
+  name: FROG
+  level: 1
+  chance: 18
+  hp: 3d8+5
+  xp: 3d12+10
+  gold: 1d6+2
+  party: 1d4
+GOBLIN:
+  name: GOBLIN
+  level: 1
+  chance: 18
+  hp: 4d8+8
+  xp: 4d12+15
+  gold: 2d6+3
+  party: 1d4

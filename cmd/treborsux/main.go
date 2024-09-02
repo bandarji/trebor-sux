@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/bandarji/treborsux/internal/ansi"
 	"github.com/bandarji/treborsux/internal/dataitems"
@@ -20,6 +21,7 @@ func main() {
 	monsters.Load(datamonsters.MonstersYAML)
 	monsters.Display()
 	fmt.Print(ansi.Pos(20, 1))
+	time.Sleep(10 * time.Second)
 }
 
 // type Terminal struct {
