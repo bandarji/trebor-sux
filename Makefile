@@ -8,10 +8,11 @@ help:
 
 build: ## Build executable
 	@go build -o ./treborsux cmd/treborsux/main.go
+	@go build -o ./brailler cmd/brailler/main.go
 
 clean: ## Remove unnecessary files
 	@go clean
-	@rm -f treborsux coverage.out coverage.html
+	@rm -f brailler treborsux coverage.out coverage.html
 
 run: build ## Play the game
 	@./treborsux
