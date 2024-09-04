@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/bandarji/treborsux/internal/ansi"
@@ -16,11 +17,17 @@ func main() {
 	}()
 	items := &dataitems.Items{}
 	items.Load(dataitems.ItemsYAML)
-	items.Display()
+	// items.Display()
 	monsters := &datamonsters.Monsters{}
 	monsters.Load(datamonsters.MonstersYAML)
-	monsters.Display()
-	fmt.Print(ansi.Pos(20, 1))
+	// monsters.Display()
+	// fmt.Print(ansi.Pos(1, 1))
+	screens, err := ansi.LoadScreens()
+	if err != nil {
+		log.Fatal(err)
+	}
+	time.Sleep(3 * time.Second)
+	fmt.Printf("%s%s", ansi.Pos(1, 1), screens["SPLASH"])
 	time.Sleep(10 * time.Second)
 }
 
