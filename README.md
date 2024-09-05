@@ -14,6 +14,8 @@ This started as a Python project, but transitioned to Go. This will never
 likely become a playable game, but it provides a proving ground for 
 programming ideas.
 
-At this time, the code only produces an initial splash screen.
+At this time, the code only produces an initial splash screen. The game 
+will use braille text for graphics, intended for play in a terminal 
+window.
 
 ![Trebor Sux splash screen](internal/ts_splash.png)
