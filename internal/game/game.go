@@ -3,6 +3,7 @@ package game
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/bandarji/treborsux/internal/ansi"
 	"github.com/bandarji/treborsux/internal/dataitems"
@@ -60,8 +61,47 @@ func areaSplash() (area string) {
 	}
 }
 
+type SimpleMenu struct {
+	Title   string
+	Options []string
+}
+
+func (m SimpleMenu) Choose() (choice string) {
+	keys := ""
+	titleBar(strings.ToUpper(m.Title))
+	for i, option := range m.Options {
+		keys += fmt.Sprintf("%d", i+1)
+		fmt.Printf(
+			"%s%s%s%s%s",
+			ansi.Pos(i+3, 4),
+			ansi.Green("["),
+			ansi.White(fmt.Sprintf("%d", i+1)),
+			ansi.Green("]  "),
+			ansi.Yellow(strings.ToUpper(option)),
+		)
+	}
+	for {
+		ch, _, _ := keyboard.GetSingleKey()
+		if strings.Contains(keys, string(ch)) {
+			choice = string(ch)
+			break
+		}
+	}
+	return
+}
+
 func areaMain() (area string) {
-	titleBar("Main Area")
+	menu := SimpleMenu{
+		Title: "City Center",
+		Options: []string{
+			"Adventurer's Guild",
+			"Dukaan's Trading Post",
+			"Enter the Dungeon",
+			"Exit the Game",
+		},
+	}
+	choice := menu.Choose()
+	_ = choice
 	return "Edge"
 }
 

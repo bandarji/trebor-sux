@@ -35,3 +35,9 @@ func Clear() string {
 func Pos(y, x int) string {
 	return fmt.Sprintf("\033[%d;%dH", y, x)
 }
+
+func ProgressBar(total, current int) (ch string) {
+	chars := []string{" ", "⡀", "⣀", "⡄", "⡆", "⡇", "⣇", "⣧", "⣷", "⣿", "⣿"}
+	ch = chars[int(float64(current)/float64(total)*100)/10]
+	return
+}
