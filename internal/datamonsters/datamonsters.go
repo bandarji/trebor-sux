@@ -33,6 +33,6 @@ func (m Monsters) Display() {
 	j := 0
 	for k := range m {
 		j++
-		fmt.Printf("%s%s%s", ansi.Pos(j, 1), ansi.Cyan("Loaded: "), ansi.Green(k))
+		fmt.Printf("%s%s%s%s", ansi.Pos(j, 1), ansi.Yellow(ansi.ProgressBar(len(m), j)), ansi.Cyan(" Loaded: "), ansi.Green(k))
 	}
 }
