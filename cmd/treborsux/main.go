@@ -2,16 +2,14 @@ package main
 
 import (
 	"fmt"
+	"os"
 
-	"github.com/bandarji/treborsux/internal/ansi"
-	"github.com/bandarji/treborsux/internal/game"
+	"github.com/bandarji/treborsux/internal/ui"
 )
 
 func main() {
-	fmt.Print(ansi.Clear(), ansi.Pos(1, 1), ansi.CursorOff())
-	defer func() {
-		fmt.Print(ansi.CursorOn())
-	}()
-	gs := game.NewSession()
-	gs.Loop()
+	if err := ui.Run(); err != nil {
+		fmt.Printf("Error running program: %v", err)
+		os.Exit(1)
+	}
 }
