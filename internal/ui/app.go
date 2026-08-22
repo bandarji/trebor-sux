@@ -4,19 +4,49 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
+	"unicode"
 
+	"github.com/bandarji/treborsux/internal/ansi"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
+type screen int
+
+const (
+	screenSplash screen = iota
+	screenTown
+	screenLocation
+)
+
+type menuItem struct {
+	Key   rune
+	Label string
+}
+
+func townMenu() []menuItem {
+	return []menuItem{
+		{Key: 'I', Label: "Inn"},
+		{Key: 'T', Label: "Tavern"},
+		{Key: 'S', Label: "Store"},
+		{Key: 'E', Label: "Enter Dungeon"},
+		{Key: 'L', Label: "Leave Game"},
+	}
+}
+
 type Model struct {
-	content string
-	ready   bool
+	content  string
+	ready    bool
+	screen   screen
+	cursor   int
+	items    []menuItem
+	location string
 }
 
 func InitialModel() Model {
 	return Model{
-		content: "",
-		ready:   false,
+		screen: screenSplash,
+		items:  townMenu(),
 	}
 }
 
@@ -27,9 +57,19 @@ func (m Model) Init() tea.Cmd {
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		switch msg.String() {
-		case "q", "ctrl+c", "enter":
+		if msg.String() == "ctrl+c" {
 			return m, tea.Quit
+		}
+		if !m.ready {
+			return m, nil
+		}
+		switch m.screen {
+		case screenSplash:
+			return m.updateSplash(msg)
+		case screenTown:
+			return m.updateTown(msg)
+		case screenLocation:
+			return m.updateLocation(msg)
 		}
 	case tea.WindowSizeMsg:
 		if !m.ready {
@@ -46,11 +86,123 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
+func (m Model) updateSplash(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	switch msg.String() {
+	case "enter", " ":
+		m.screen = screenTown
+	case "q":
+		return m, tea.Quit
+	}
+	return m, nil
+}
+
+func (m Model) updateTown(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	switch msg.String() {
+	case "up", "k":
+		if m.cursor > 0 {
+			m.cursor--
+		}
+	case "down", "j":
+		if m.cursor < len(m.items)-1 {
+			m.cursor++
+		}
+	case "enter":
+		return m.activate(m.cursor)
+	case "q":
+		return m, tea.Quit
+	default:
+		if len(msg.String()) == 1 {
+			ch := unicode.ToUpper(rune(msg.String()[0]))
+			for i, item := range m.items {
+				if item.Key == ch {
+					return m.activate(i)
+				}
+			}
+		}
+	}
+	return m, nil
+}
+
+func (m Model) updateLocation(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	switch msg.String() {
+	case "enter", "esc", "b":
+		m.screen = screenTown
+	case "q":
+		return m, tea.Quit
+	}
+	return m, nil
+}
+
+func (m Model) activate(index int) (tea.Model, tea.Cmd) {
+	item := m.items[index]
+	m.cursor = index
+	if item.Key == 'L' {
+		return m, tea.Quit
+	}
+	m.screen = screenLocation
+	m.location = item.Label
+	return m, nil
+}
+
 func (m Model) View() string {
 	if !m.ready {
 		return "Loading..."
 	}
-	return m.content
+	switch m.screen {
+	case screenTown:
+		return m.viewTown()
+	case screenLocation:
+		return m.viewLocation()
+	default:
+		return m.content
+	}
+}
+
+func (m Model) viewTown() string {
+	var b strings.Builder
+	b.WriteString(titleBar("TOWN"))
+	b.WriteString("\n\n")
+	for i, item := range m.items {
+		if i == m.cursor {
+			b.WriteString("  ")
+			b.WriteString(ansi.White("> "))
+			b.WriteString(colorizeItem(item, true))
+		} else {
+			b.WriteString("    ")
+			b.WriteString(colorizeItem(item, false))
+		}
+		b.WriteString("\n")
+	}
+	return b.String()
+}
+
+func (m Model) viewLocation() string {
+	var b strings.Builder
+	b.WriteString(titleBar(strings.ToUpper(m.location)))
+	b.WriteString("\n\n    ")
+	b.WriteString(ansi.Yellow("Nothing happens here yet."))
+	b.WriteString("\n\n    ")
+	b.WriteString(ansi.Green("[") + ansi.White("Enter") + ansi.Green("]  "))
+	b.WriteString(ansi.Yellow("Return to town"))
+	b.WriteString("\n")
+	return b.String()
+}
+
+func titleBar(title string) string {
+	return ansi.Green(strings.Repeat("=", 80)) + "\n" +
+		ansi.Green("[ ") + ansi.Yellow(title) + ansi.Green(" ]")
+}
+
+func colorizeItem(item menuItem, selected bool) string {
+	rest := ""
+	if len(item.Label) > 1 {
+		rest = item.Label[1:]
+	}
+	key := string(item.Key)
+	if selected {
+		return ansi.Green("[") + ansi.White(key) + ansi.Green("]") + ansi.Magenta(rest)
+	}
+	return ansi.Green("[") + ansi.Magenta(key) + ansi.Green("]") + ansi.Yellow(rest)
 }
 
 func loadContent() tea.Msg {
