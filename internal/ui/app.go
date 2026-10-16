@@ -19,18 +19,29 @@ const (
 	screenLocation
 )
 
+const maxPartySize = 6
+
 type menuItem struct {
-	Key   rune
-	Label string
+	Key         rune
+	Label       string
+	Description string
+}
+
+type adventurer struct {
+	Name   string
+	Class  string
+	AC     int
+	HP     int
+	Status string
 }
 
 func townMenu() []menuItem {
 	return []menuItem{
-		{Key: 'I', Label: "Inn"},
-		{Key: 'T', Label: "Tavern"},
-		{Key: 'S', Label: "Store"},
-		{Key: 'E', Label: "Enter Dungeon"},
-		{Key: 'L', Label: "Leave Game"},
+		{Key: 'I', Label: "Inn", Description: "Heal injured or dead adventurers."},
+		{Key: 'T', Label: "Tavern", Description: "Update current adventurer list."},
+		{Key: 'S', Label: "Store", Description: "Buy and sell items."},
+		{Key: 'E', Label: "Enter Dungeon", Description: "Start your quest."},
+		{Key: 'L', Label: "Leave Game", Description: "Run away!"},
 	}
 }
 
@@ -41,6 +52,7 @@ type Model struct {
 	cursor   int
 	items    []menuItem
 	location string
+	party    []adventurer
 }
 
 func InitialModel() Model {
@@ -173,7 +185,63 @@ func (m Model) viewTown() string {
 		}
 		b.WriteString("\n")
 	}
+	if m.cursor >= 0 && m.cursor < len(m.items) {
+		selected := m.items[m.cursor]
+		b.WriteString("\n    ")
+		b.WriteString(ansi.Green("[ "))
+		b.WriteString(ansi.Yellow(selected.Label))
+		b.WriteString(ansi.Green(" ]"))
+		b.WriteString("\n    ")
+		b.WriteString(ansi.Yellow(selected.Description))
+		b.WriteString("\n")
+	}
+	b.WriteString(m.viewParty())
 	return b.String()
+}
+
+func (m Model) viewParty() string {
+	const (
+		nameW   = 18
+		classW  = 12
+		statusW = 10
+	)
+	var b strings.Builder
+	header := fmt.Sprintf("%-*s %-*s %4s %4s  %-*s", nameW, "Name", classW, "CLASS", "AC", "HP", statusW, "STATUS")
+	b.WriteString("\n    ")
+	b.WriteString(ansi.White(header))
+	b.WriteString("\n    ")
+	b.WriteString(ansi.Green(strings.Repeat("-", len(header))))
+
+	party := m.party
+	if len(party) > maxPartySize {
+		party = party[:maxPartySize]
+	}
+	if len(party) == 0 {
+		b.WriteString("\n    ")
+		b.WriteString(ansi.Yellow("No adventurers in the party."))
+		b.WriteString("\n")
+		return b.String()
+	}
+	for _, member := range party {
+		row := fmt.Sprintf("%-*s %-*s %4d %4d  %-*s",
+			nameW, clip(member.Name, nameW),
+			classW, clip(member.Class, classW),
+			member.AC,
+			member.HP,
+			statusW, clip(member.Status, statusW),
+		)
+		b.WriteString("\n    ")
+		b.WriteString(ansi.Yellow(row))
+	}
+	b.WriteString("\n")
+	return b.String()
+}
+
+func clip(s string, width int) string {
+	if len(s) <= width {
+		return s
+	}
+	return s[:width]
 }
 
 func (m Model) viewLocation() string {
